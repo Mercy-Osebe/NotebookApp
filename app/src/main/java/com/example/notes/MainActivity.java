@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,14 +18,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.ListView;
 
+import java.time.DateTimeException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
     static ArrayList<String> notes=new ArrayList<>();
     static ArrayAdapter<String> arrayAdapter;
+
+    DatePickerDialog.OnDateSetListener setListener;//null object reference
+    final Calendar cal=Calendar.getInstance();
+    final int year=cal.get(Calendar.YEAR);
+    final int month=cal.get(Calendar.MONTH);
+    final int day=cal.get(Calendar.DAY_OF_MONTH);
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
@@ -43,6 +54,14 @@ public class MainActivity extends AppCompatActivity {
             return true;
 
         }
+        if (item.getItemId()==R.id.calendar){
+            DatePickerDialog datePickerDialog=new DatePickerDialog(MainActivity.this, android.R.style.Widget_Holo,setListener,year,month,day);
+            datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.CYAN));
+            datePickerDialog.show();
+
+
+            return true;
+        }
         return false;
     }
 
@@ -50,6 +69,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        setListener=new DatePickerDialog.OnDateSetListener() {
+//            @Override
+//            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+//                month=month+1;
+//                String day=year+" /"+month+"/"+dayOfMonth;
+//
+//
+//            }
+//        };
+
+
         ListView listView=findViewById(R.id.listView);
         SharedPreferences sharedPreferences=getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         HashSet<String> set= (HashSet<String>) sharedPreferences.getStringSet("notes",null);
